@@ -56,9 +56,9 @@ export default function App() {
     console.log(`x = ${promptPos?.x} y = ${promptPos?.y} and ${hasPrompt}`);
 
     // save locally
-    // const existingElements = excalidrawAPI.getSceneElements();
-    // const appState = excalidrawAPI.getAppState();
-    // localStorage.setItem("excalidraw-scene", JSON.stringify({existingElements,appState}));
+    const existingElements = excalidrawAPI.getSceneElements();
+    const appState = excalidrawAPI.getAppState();
+    localStorage.setItem("excalidraw-scene", JSON.stringify({existingElements,appState}));
   };
 
   const handlePromptScan = () => {
@@ -292,15 +292,27 @@ export default function App() {
   // ---------------------------
   return (
     <div ref={containerRef} className="h-screen w-screen" style={{ position: "relative" }}>
+
       <Excalidraw
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         renderTopRightUI={() => {
           return <ShinyButton onClick={updateScene} />;
         }}
-        initialData={{
-          elements: [],
-          appState: { viewBackgroundColor: "#ffffff" },
-        }}
+        initialData={(() => {
+  try {
+    const saved = localStorage.getItem("excalidraw-scene");
+    if (saved) {
+      const { existingElements } = JSON.parse(saved);
+      return { 
+        elements: existingElements, 
+        appState: { viewBackgroundColor: "#ffffff" }  // always fresh appState
+      };
+    }
+  } catch (e) {
+    localStorage.removeItem("excalidraw-scene"); // wipe corrupted data
+  }
+  return { elements: [], appState: { viewBackgroundColor: "#ffffff" } };
+})()}
         theme="dark"
         onChange={() => {
           // your original handlers - unchanged
