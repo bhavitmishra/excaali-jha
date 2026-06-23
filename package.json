@@ -16,6 +16,7 @@
     "firebase": "^12.12.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-switch": "^7.1.0",
     "tailwindcss": "^4.1.11",
     "tldraw": "^3.14.2"
   },

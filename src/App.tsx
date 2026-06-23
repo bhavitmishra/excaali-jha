@@ -10,6 +10,8 @@ import { useEffect, useRef, useState, type JSX } from "react";
 import ShinyButton from "./comp/Button";
 import newElements from "./scene/newElement";
 import axios from "axios";
+import GridToggle from "./comp/GridToggle"
+
 
 const extractPromptTexts = (elements: any[]): string[] => {
   return elements
@@ -23,6 +25,11 @@ export default function App() {
   const [excalidrawAPI, setExcalidrawAPI] = useState<any>(null);
   const [hasPrompt, setHasPrompt] = useState(false);
   const [promptPos, setPromptPos] = useState<{ x: number; y: number } | null>(null);
+  const [grid , setGrid] = useState(false);
+
+  const toggle = ()=>{
+    setGrid(grid => !grid)
+  }
 
   // ---------------------------
   // Your existing logic (unchanged)
@@ -280,7 +287,7 @@ export default function App() {
         width={viewport.w}
         height={viewport.h}
       >
-        {lines}
+        { grid ? lines : null}
         {originCrosshair}
       </svg>
     );
@@ -296,7 +303,11 @@ export default function App() {
       <Excalidraw
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         renderTopRightUI={() => {
-          return <ShinyButton onClick={updateScene} />;
+          
+          return <div className="flex items-center space-x-4">
+  <GridToggle grid={grid} toggle={toggle} />
+  <ShinyButton onClick={updateScene} />
+</div>
         }}
         initialData={(() => {
   try {
